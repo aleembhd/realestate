@@ -100,6 +100,14 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         console.error("Interested calls card not found");
     }
+
+    // Add event listener for the new "Week Report" button
+    const weekReportBtn = document.getElementById('weekReportBtn');
+    if (weekReportBtn) {
+        weekReportBtn.addEventListener('click', openWeeklyReport);
+    } else {
+        console.error("Week Report button not found");
+    }
 });
 
 // Keep your existing functions (updateDashboard, openTodayDashboard, etc.) outside the DOMContentLoaded event listener
@@ -732,6 +740,11 @@ function openCallBackCallsTab() {
     // Write the content to the new tab
     newTab.document.write(content);
     newTab.document.close();
+}
+
+function openWeeklyReport() {
+    // Open a new tab with the weekly report
+    window.open('weekly_report.html', '_blank');
 }
 
 // Add this to your main script.js file
