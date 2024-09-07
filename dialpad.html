@@ -1,7 +1,6 @@
-<html><head><base href="tel:7672029401">
-<meta charset="UTF-8">
+<html><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Elegant Black & White Dial Pad - 767-202-9401</title>
+<title>Elegant Black & White Dial Pad</title>
 <style>
     :root {
         --primary-color: #000000;
@@ -124,7 +123,7 @@
 </head>
 <body>
     <div class="phone-dialer">
-        <div class="display" id="display">7672029401</div>
+        <div class="display" id="display"></div>
         <div class="keypad">
             <button class="key">1</button>
             <button class="key">2</button>
@@ -162,10 +161,10 @@
         const deleteButton = document.getElementById('deleteButton');
         const callButton = document.getElementById('callButton');
 
-        let phoneNumber = '7672029401';
+        let phoneNumber = '';
 
         function updateDisplay() {
-            display.textContent = phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
+            display.textContent = phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3').trim();
         }
 
         keys.forEach(key => {
@@ -178,8 +177,10 @@
         });
 
         deleteButton.addEventListener('click', () => {
-            phoneNumber = phoneNumber.slice(0, -1);
-            updateDisplay();
+            if (phoneNumber.length > 0) {
+                phoneNumber = phoneNumber.slice(0, -1);
+                updateDisplay();
+            }
         });
 
         callButton.addEventListener('click', () => {
@@ -202,21 +203,8 @@
             key.addEventListener('click', () => animateKey(key));
         });
 
-        // Smooth typing animation
-        function typeNumber() {
-            let index = 0;
-            const typingInterval = setInterval(() => {
-                if (index < phoneNumber.length) {
-                    display.textContent = phoneNumber.slice(0, index + 1).replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
-                    index++;
-                } else {
-                    clearInterval(typingInterval);
-                }
-            }, 100);
-        }
-
-        // Call the typing animation when the page loads
-        window.onload = typeNumber;
+        // Remove the typing animation when the page loads
+        // window.onload = typeNumber;
     </script>
 </body>
 </html>
