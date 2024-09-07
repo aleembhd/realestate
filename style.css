@@ -1,3 +1,10 @@
+
+
+
+
+
+
+
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
@@ -36,6 +43,7 @@ body {
 .btn-dark {
     background-color: #333;
     color: #fff;
+    margin-right: 10px;
 }
 /* You can remove or comment out these styles if they're not used elsewhere */
 /*
@@ -64,7 +72,7 @@ body {
     font-size: 1.2em;
 }
 .card .number {
-    font-size: 2.5em;
+    font-size: 3.5em;
     font-weight: bold;
     margin: 10px 0;
 }
@@ -99,13 +107,13 @@ body {
 }
 
 .summary-card .number {
-    font-size: 1.8em;
+    font-size: 3.5em;
     font-weight: bold;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
 .summary-card div:last-child {
-    font-size: 0.9em;
+    font-size: 1.2em;
     color: #666;
 }
 
@@ -146,7 +154,8 @@ body {
     }
 
     .summary-card .number {
-        font-size: 1.4em;
+        font-size: 2.6rem;
+        font-weight: bold;
     }
 
     .summary-card div:last-child {
@@ -179,7 +188,7 @@ body {
     }
 
     .summary-card .number {
-        font-size: 1.2em;
+        font-size: 2.4rem;
     }
 
     .summary-card div:last-child {
@@ -272,7 +281,7 @@ body {
     }
 
     .call-summary div div:last-child {
-        font-size: 0.8em; /* Reduce label font size */
+        font-size: 1em; /* Reduce label font size */
     }
 
     table {
@@ -315,7 +324,7 @@ body {
     }
 
     .call-summary div div:last-child {
-        font-size: 0.7em; /* Further reduce label font size */
+        font-size: 1rem; /* Further reduce label font size */
     }
 
     .summary-card {
@@ -550,12 +559,12 @@ body {
 
     .summary-card.answredcalls .number,
     .summary-card.unanswredcalls .number {
-        font-size: 1.2em;
+        font-size: 1.7rem;
     }
 
     .summary-card.answredcalls div:last-child,
     .summary-card.unanswredcalls div:last-child {
-        font-size: 0.8em;
+        font-size: 1rem;
     }
 }
 
@@ -589,12 +598,12 @@ body {
 
     .summary-card.callbackcalls .number,
     .summary-card.intreastedcalls .number {
-        font-size: 1.2em;
+        font-size: 1.7rem;
     }
 
     .summary-card.callbackcalls div:last-child,
     .summary-card.intreastedcalls div:last-child {
-        font-size: 0.8em;
+        font-size: 1rem;
     }
 }
 
@@ -637,3 +646,47 @@ body {
     width: 16px;
     height: 16px;
 }
+
+@media screen and (max-width: 768px) {
+  .summary-card .number {
+    font-size: 3.2rem;
+    font-weight: bold;
+  }
+
+  .summary-card div:last-child {
+    font-size: 1.1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .summary-card {
+    padding: 15px 10px;
+  }
+
+  .summary-card .number {
+    font-size: 2.8rem;
+  }
+
+  .summary-card div:last-child {
+    font-size: 1rem;
+  }
+
+  .summary-row {
+    flex-direction: column;
+  }
+
+  .summary-card {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
