@@ -1,5 +1,5 @@
  // Sample data
- const callData = {
+ let callData = {
     totalCalls: 1234,
     interestedCalls: 300,
     answeredCalls: 789,
@@ -10,6 +10,22 @@
         { number: "7894561230", status: "Not Answered", notes: "No response", duration: "0:45" },
         { number: "9876543210", status: "Call Back", notes: "Requested call back later", duration: "2:12" },
         { number: "8765432109", status: "Interested", notes: "Wants more information on pricing", duration: "8:56" }
+    ]
+};
+
+// Dummy data for today
+const todayDummyData = {
+    totalCalls: 15,
+    interestedCalls: 5,
+    answeredCalls: 10,
+    unansweredCalls: 3,
+    callBackCalls: 2,
+    details: [
+        { number: "5551234567", status: "Answered", notes: "Scheduled property viewing", duration: "6:30" },
+        { number: "5559876543", status: "Not Answered", notes: "Voicemail left", duration: "0:30" },
+        { number: "5552468135", status: "Interested", notes: "Requested more info via email", duration: "4:15" },
+        { number: "5551357924", status: "Call Back", notes: "Will call back tomorrow", duration: "1:45" },
+        { number: "5557891234", status: "Answered", notes: "Not interested at this time", duration: "2:50" }
     ]
 };
 
@@ -41,7 +57,11 @@ document.addEventListener('DOMContentLoaded', function() {
     updateDashboard(callData);
 
     // Event listeners for buttons
-    document.getElementById('todayBtn').addEventListener('click', openTodayDashboard);
+    document.getElementById('todayBtn').addEventListener('click', function() {
+        callData = { ...todayDummyData };
+        updateDashboard(callData);
+        openTodayDashboard();
+    });
     document.getElementById('settingsBtn').addEventListener('click', function() {
         alert('Settings clicked');
     });
@@ -105,14 +125,48 @@ function openAnsweredCallsTab() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Answered Calls</title>
         <link rel="stylesheet" href="style.css">
+        <style>
+            .card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+            .back-button {
+                background-color: #f3f4f6;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                padding: 8px 16px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                font-size: 14px;
+                font-weight: 500;
+            }
+            .back-button:hover {
+                background-color: #e5e7eb;
+            }
+            .back-icon {
+                margin-right: 8px;
+                width: 16px;
+                height: 16px;
+            }
+        </style>
     </head>
     <body>
         <div class="container">
-            <div class="header">
-                <h1 class="dashboard-title">Answered Calls for ${dateString}</h1>
-            </div>
-
             <div class="card">
+                <div class="card-header">
+                    <h1 class="dashboard-title">Answered Calls for ${dateString}</h1>
+                    <button class="back-button" id="backButton">
+                        <svg class="back-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m12 19-7-7 7-7" />
+                            <path d="M19 12H5" />
+                        </svg>
+                        Back
+                    </button>
+                </div>
+
                 <h2>Answered Calls</h2>
                 <div class="table-responsive">
                     <table class="call-details-table">
@@ -136,6 +190,12 @@ function openAnsweredCallsTab() {
                 </div>
             </div>
         </div>
+
+        <script>
+            document.getElementById('backButton').addEventListener('click', function() {
+                window.close();
+            });
+        </script>
     </body>
     </html>
     `;
@@ -153,6 +213,9 @@ function openTodayDashboard() {
     const today = new Date();
     const dateString = today.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
+    // Check if there are any calls for today
+    const hasCalls = callData.totalCalls > 0;
+
     // Create the content for the new tab
     const content = `
     <!DOCTYPE html>
@@ -162,104 +225,195 @@ function openTodayDashboard() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Today's Dashboard</title>
         <link rel="stylesheet" href="style.css">
+        <style>
+            .card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+            .back-button, .clear-button {
+                background-color: #f3f4f6;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                padding: 8px 16px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                font-size: 14px;
+                font-weight: 500;
+                margin-left: 10px;
+            }
+            .back-button:hover, .clear-button:hover {
+                background-color: #e5e7eb;
+            }
+            .back-icon {
+                margin-right: 8px;
+                width: 16px;
+                height: 16px;
+            }
+            .no-calls-container {
+                text-align: center;
+                padding: 40px 20px;
+            }
+            .motivation-message {
+                font-size: 24px;
+                color: #333;
+                margin-bottom: 20px;
+            }
+            .start-day-btn {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                font-size: 18px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+            .start-day-btn:hover {
+                background-color: #45a049;
+            }
+            .button-container {
+                display: flex;
+                justify-content: flex-end;
+            }
+        </style>
     </head>
     <body>
         <div class="container">
-            <div class="header">
-                <h1 class="dashboard-title">Dashboard for ${dateString}</h1>
-            </div>
-
             <div class="card">
-                <h2>Call Summary</h2>
-                <div class="call-summary">
-                    <div class="summary-row">
-                        <div class="summary-card">
-                            <div class="number" id="totalCallsSummary">0</div>
-                            <div>Total Calls</div>
-                        </div>
-                        <div class="summary-card">
-                            <div class="number blue" id="interestedCallsSummary">0</div>
-                            <div>Interested</div>
-                        </div>
-                    </div>
-                    <div class="summary-row">
-                        <div class="summary-card">
-                            <div class="number green" id="answeredCallsSummary">0</div>
-                            <div>Answered</div>
-                        </div>
-                        <div class="summary-card">
-                            <div class="number red" id="unansweredCallsSummary">0</div>
-                            <div>Unanswered</div>
-                        </div>
-                        <div class="summary-card">
-                            <div class="number orange" id="callBackCallsSummary">0</div>
-                            <div>Call Back</div>
-                        </div>
+                <div class="card-header">
+                    <h1 class="dashboard-title">Dashboard for ${dateString}</h1>
+                    <div class="button-container">
+                        <button class="clear-button" id="clearButton">Clear Data</button>
+                        <button class="back-button" id="backButton">
+                            <svg class="back-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m12 19-7-7 7-7" />
+                                <path d="M19 12H5" />
+                            </svg>
+                            Back
+                        </button>
                     </div>
                 </div>
-            </div>
 
-            <div class="card">
-                <h2>Call Details</h2>
-                <div class="table-responsive">
-                    <table class="call-details-table">
-                        <thead>
-                            <tr>
-                                <th>Contact</th>
-                                <th>Status</th>
-                                <th>Notes</th>
-                                <th>Duration</th>
-                            </tr>
-                        </thead>
-                        <tbody id="callDetailsBody">
-                            <!-- Call details will be populated here by JavaScript -->
-                        </tbody>
-                    </table>
+                <div id="dashboardContent">
+                    ${hasCalls ? `
+                        <div class="call-summary">
+                            <div class="summary-row firstrow">
+                                <div class="summary-card toatalcalls">
+                                    <div class="number" id="totalCallsSummary">${callData.totalCalls}</div>
+                                    <div>Total Calls</div>
+                                </div>
+                            </div>
+                            <div class="summary-row secondrow">
+                                <div class="summary-card answredcalls">
+                                    <div class="number green" id="answeredCallsSummary">${callData.answeredCalls}</div>
+                                    <div>Answered</div>
+                                </div>
+                                <div class="summary-card unanswredcalls">
+                                    <div class="number red" id="unansweredCallsSummary">${callData.unansweredCalls}</div>
+                                    <div>Unanswered</div>
+                                </div>
+                            </div>
+                            <div class="summary-row thirdrow">
+                                <div class="summary-card callbackcalls">
+                                    <div class="number orange" id="callBackCallsSummary">${callData.callBackCalls}</div>
+                                    <div>Call Back</div>
+                                </div>
+                                <div class="summary-card intreastedcalls">
+                                    <div class="number blue" id="interestedCallsSummary">${callData.interestedCalls}</div>
+                                    <div>Interested</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h2>Call Details</h2>
+                            <div class="table-responsive">
+                                <table class="call-details-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Contact</th>
+                                            <th>Status</th>
+                                            <th>Notes</th>
+                                            <th>Duration</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="callDetailsBody">
+                                        ${callData.details.map(call => `
+                                            <tr>
+                                                <td>${call.number}</td>
+                                                <td><span class="status status-${call.status.toLowerCase().replace(' ', '-')}">${call.status}</span></td>
+                                                <td>${call.notes}</td>
+                                                <td>${call.duration}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    ` : `
+                        <div class="no-calls-container">
+                            <p class="motivation-message">Ready to make today amazing? Your success journey starts with the first call!</p>
+                            <button class="start-day-btn" onclick="startDay()">Start Your Day</button>
+                        </div>
+                    `}
                 </div>
             </div>
         </div>
 
         <script>
-            // Fetch and display today's data
-            function fetchTodayData() {
-                // This is where you would typically fetch data from your backend
-                // For this example, we'll use dummy data
-                const todayData = {
-                    totalCalls: 50,
-                    interestedCalls: 20,
-                    answeredCalls: 30,
-                    unansweredCalls: 15,
-                    callBackCalls: 5,
-                    details: [
-                        { number: "1234567890", status: "Answered", notes: "Interested in property", duration: "5:30" },
-                        { number: "9876543210", status: "Not Answered", notes: "No response", duration: "0:45" },
-                        { number: "5555555555", status: "Call Back", notes: "Requested call back", duration: "2:15" }
-                    ]
+            document.getElementById('backButton').addEventListener('click', function() {
+                window.close();
+            });
+
+            document.getElementById('clearButton').addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+                    clearData();
+                    updateDashboard();
+                }
+            });
+
+            function clearData() {
+                callData = {
+                    totalCalls: 0,
+                    interestedCalls: 0,
+                    answeredCalls: 0,
+                    unansweredCalls: 0,
+                    callBackCalls: 0,
+                    details: []
                 };
-
-                // Update the dashboard with today's data
-                document.getElementById('totalCallsSummary').textContent = todayData.totalCalls;
-                document.getElementById('interestedCallsSummary').textContent = todayData.interestedCalls;
-                document.getElementById('answeredCallsSummary').textContent = todayData.answeredCalls;
-                document.getElementById('unansweredCallsSummary').textContent = todayData.unansweredCalls;
-                document.getElementById('callBackCallsSummary').textContent = todayData.callBackCalls;
-
-                const callDetailsBody = document.getElementById('callDetailsBody');
-                callDetailsBody.innerHTML = '';
-                todayData.details.forEach(call => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = \`
-                        <td>\${call.number}</td>
-                        <td><span class="status status-\${call.status.toLowerCase().replace(' ', '-')}">\${call.status}</span></td>
-                        <td>\${call.notes}</td>
-                        <td>\${call.duration}</td>
-                    \`;
-                    callDetailsBody.appendChild(row);
-                });
+                // You might want to send this data to the main page or server
+                window.opener.postMessage({ type: 'clearData', data: callData }, '*');
             }
 
-            // Call the function to fetch and display today's data
-            fetchTodayData();
+            function updateDashboard() {
+                const dashboardContent = document.getElementById('dashboardContent');
+                if (callData.totalCalls > 0) {
+                    // Update with call data (you'll need to implement this part)
+                } else {
+                    dashboardContent.innerHTML = \`
+                        <div class="no-calls-container">
+                            <p class="motivation-message">Ready to make today amazing? Your success journey starts with the first call!</p>
+                            <button class="start-day-btn" onclick="startDay()">Start Your Day</button>
+                        </div>
+                    \`;
+                }
+            }
+
+            function startDay() {
+                alert("Let's start making calls and have a productive day!");
+                // Here you could add logic to initialize the day's activities
+            }
+
+            // Listen for messages from the opener
+            window.addEventListener('message', function(event) {
+                if (event.data.type === 'updateData') {
+                    callData = event.data.data;
+                    updateDashboard();
+                }
+            });
         </script>
     </body>
     </html>
@@ -271,6 +425,12 @@ function openTodayDashboard() {
 }
 
 function showClearDataConfirmation() {
+    // Remove any existing modal
+    const existingModal = document.querySelector('.modal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+
     const modal = document.createElement('div');
     modal.className = 'modal';
     modal.innerHTML = `
@@ -286,15 +446,17 @@ function showClearDataConfirmation() {
 
     modal.style.display = 'block';
 
-    document.getElementById('confirmClear').addEventListener('click', function() {
-        clearData();
-        modal.style.display = 'none';
+    // Use event delegation for button clicks
+    modal.addEventListener('click', function(event) {
+        if (event.target.id === 'confirmClear') {
+            clearData();
+            modal.style.display = 'none';
+        } else if (event.target.id === 'cancelClear') {
+            modal.style.display = 'none';
+        }
     });
 
-    document.getElementById('cancelClear').addEventListener('click', function() {
-        modal.style.display = 'none';
-    });
-
+    // Close modal when clicking outside
     window.onclick = function(event) {
         if (event.target == modal) {
             modal.style.display = 'none';
@@ -340,6 +502,31 @@ function openUnansweredCallsTab() {
         <title>Unanswered Calls</title>
         <link rel="stylesheet" href="style.css">
         <style>
+            .card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+            .back-button {
+                background-color: #f3f4f6;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                padding: 8px 16px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                font-size: 14px;
+                font-weight: 500;
+            }
+            .back-button:hover {
+                background-color: #e5e7eb;
+            }
+            .back-icon {
+                margin-right: 8px;
+                width: 16px;
+                height: 16px;
+            }
             .call-again-btn {
                 background-color: #4CAF50;
                 color: white;
@@ -355,11 +542,18 @@ function openUnansweredCallsTab() {
     </head>
     <body>
         <div class="container">
-            <div class="header">
-                <h1 class="dashboard-title">Unanswered Calls for ${dateString}</h1>
-            </div>
-
             <div class="card">
+                <div class="card-header">
+                    <h1 class="dashboard-title">Unanswered Calls for ${dateString}</h1>
+                    <button class="back-button" id="backButton">
+                        <svg class="back-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m12 19-7-7 7-7" />
+                            <path d="M19 12H5" />
+                        </svg>
+                        Back
+                    </button>
+                </div>
+
                 <h2>Unanswered Calls</h2>
                 <div class="table-responsive">
                     <table class="call-details-table">
@@ -392,6 +586,10 @@ function openUnansweredCallsTab() {
                 alert('Calling ' + number);
                 // In a real application, you might integrate with a calling API or system
             }
+
+            document.getElementById('backButton').addEventListener('click', function() {
+                window.close();
+            });
         </script>
     </body>
     </html>
@@ -423,6 +621,31 @@ function openCallBackCallsTab() {
         <title>Call Back Calls</title>
         <link rel="stylesheet" href="style.css">
         <style>
+            .card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+            .back-button {
+                background-color: #f3f4f6;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                padding: 8px 16px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                font-size: 14px;
+                font-weight: 500;
+            }
+            .back-button:hover {
+                background-color: #e5e7eb;
+            }
+            .back-icon {
+                margin-right: 8px;
+                width: 16px;
+                height: 16px;
+            }
             .action-btn {
                 padding: 5px 10px;
                 margin: 2px;
@@ -443,11 +666,18 @@ function openCallBackCallsTab() {
     </head>
     <body>
         <div class="container">
-            <div class="header">
-                <h1 class="dashboard-title">Call Back Calls for ${dateString}</h1>
-            </div>
-
             <div class="card">
+                <div class="card-header">
+                    <h1 class="dashboard-title">Call Back Calls for ${dateString}</h1>
+                    <button class="back-button" id="backButton">
+                        <svg class="back-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m12 19-7-7 7-7" />
+                            <path d="M19 12H5" />
+                        </svg>
+                        Back
+                    </button>
+                </div>
+
                 <h2>Call Back Calls</h2>
                 <div class="table-responsive">
                     <table class="call-details-table">
@@ -490,6 +720,10 @@ function openCallBackCallsTab() {
                 // Open WhatsApp chat with this number
                 window.open('https://wa.me/' + cleanNumber, '_blank');
             }
+
+            document.getElementById('backButton').addEventListener('click', function() {
+                window.close();
+            });
         </script>
     </body>
     </html>
@@ -499,6 +733,15 @@ function openCallBackCallsTab() {
     newTab.document.write(content);
     newTab.document.close();
 }
+
+// Add this to your main script.js file
+window.addEventListener('message', function(event) {
+    if (event.data.type === 'clearData') {
+        callData = event.data.data;
+        updateDashboard(callData);
+    }
+});
+
 
 function openInterestedCallsTab() {
     console.log("openInterestedCallsTab function called");
@@ -523,6 +766,31 @@ function openInterestedCallsTab() {
         <title>Interested Calls</title>
         <link rel="stylesheet" href="style.css">
         <style>
+            .card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+            .back-button {
+                background-color: #f3f4f6;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                padding: 8px 16px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                font-size: 14px;
+                font-weight: 500;
+            }
+            .back-button:hover {
+                background-color: #e5e7eb;
+            }
+            .back-icon {
+                margin-right: 8px;
+                width: 16px;
+                height: 16px;
+            }
             .action-btn {
                 padding: 5px 10px;
                 margin: 2px;
@@ -543,11 +811,18 @@ function openInterestedCallsTab() {
     </head>
     <body>
         <div class="container">
-            <div class="header">
-                <h1 class="dashboard-title">Interested Calls for ${dateString}</h1>
-            </div>
-
             <div class="card">
+                <div class="card-header">
+                    <h1 class="dashboard-title">Interested Calls for ${dateString}</h1>
+                    <button class="back-button" id="backButton">
+                        <svg class="back-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m12 19-7-7 7-7" />
+                            <path d="M19 12H5" />
+                        </svg>
+                        Back
+                    </button>
+                </div>
+
                 <h2>Interested Calls</h2>
                 <div class="table-responsive">
                     <table class="call-details-table">
@@ -590,6 +865,10 @@ function openInterestedCallsTab() {
                 // Open WhatsApp chat with this number
                 window.open('https://wa.me/' + cleanNumber, '_blank');
             }
+
+            document.getElementById('backButton').addEventListener('click', function() {
+                window.close();
+            });
         </script>
     </body>
     </html>
